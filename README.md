@@ -1,5 +1,22 @@
-# protobuf-net
+# protobuf-net - with precompile working for NET6.0, compatible with trimming
 protobuf-net is a contract based serializer for .NET code, that happens to write data in the "protocol buffers" serialization format engineered by Google. The API, however, is very different to Google's, and follows typical .NET patterns (it is broadly comparable, in usage, to XmlSerializer, DataContractSerializer, etc). It should work for most .NET languages that write standard types and can use attributes.
+
+# How to use
+
+1 - compile precompile - /precompile\protobuf-precompile\precompile-netcore.sln
+2 - prepare serializer using compiled precompile:
+
+	eg post build step in your Model.csproj:
+	```
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Exec Command="dotnet $(ProjectDir)../lib/tools/protobuf-net/precompile-netcore/precompile.dll -i:$(TargetDir)$(TargetFileName) -o:$(ProjectDir)../generated/Model.Serializer.dll -t:Model.Serializer" />
+	</Target>
+	```
+	
+3. compile protobuf-net.dll from - src\protobuf-net.sln 
+4. add dependency to protobuf-net in your project - use compiled protobuf-net.dll library in project where you need to work with serialized data (instead of protobuf-net NuGet)
+5. add dependency to precompiled serializer in your project
+6. use your serializer as ```serializer.Serialize()``` and ```serializer.Deserialize()``` - (must create instance first)
 
 ## Release Notes
 
