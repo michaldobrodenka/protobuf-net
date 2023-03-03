@@ -3,7 +3,9 @@ protobuf-net is a contract based serializer for .NET code, that happens to write
 
 # How to use
 
-1 - compile precompile - /precompile\protobuf-precompile\precompile-netcore.sln
+(0 - checkout branch aot-net6)
+
+1 - compile precompile - `precompile\protobuf-precompile\precompile-netcore.sln`
 2 - prepare serializer using compiled precompile:
 
 	eg post build step in your Model.csproj:
@@ -13,10 +15,10 @@ protobuf-net is a contract based serializer for .NET code, that happens to write
 	</Target>
 	```
 	
-3. compile protobuf-net.dll from - src\protobuf-net.sln 
+3. compile protobuf-net.dll from - `src\protobuf-net.sln` 
 4. add dependency to protobuf-net in your project - use compiled protobuf-net.dll library in project where you need to work with serialized data (instead of protobuf-net NuGet)
 5. add dependency to precompiled serializer in your project
-6. use your serializer as ```serializer.Serialize()``` and ```serializer.Deserialize()``` - (must create instance first)
+6. use your serializer as ```serializer.Serialize()``` and ```serializer.Deserialize()``` - (create instance first)
 
 ## Release Notes
 
