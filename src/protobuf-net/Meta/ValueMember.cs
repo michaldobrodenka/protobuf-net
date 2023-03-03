@@ -520,7 +520,7 @@ namespace ProtoBuf.Meta
                     ser = TryGetCoreSerializer(model, dataFormat, finalType, out WireType wireType, AsReference, DynamicType, OverwriteList, true);
                     if (ser == null)
                     {
-                        throw new InvalidOperationException("No serializer defined for type: " + finalType.FullName);
+                        throw new InvalidOperationException("ValueMember - No serializer defined for type: " + finalType.FullName);
                     }
 
                     // apply tags

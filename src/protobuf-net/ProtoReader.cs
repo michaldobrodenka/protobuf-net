@@ -659,7 +659,7 @@ namespace ProtoBuf
             {
                 wireType = (WireType)(tag & 7);
                 fieldNumber = (int)(tag >> 3);
-                if (fieldNumber < 1) throw new ProtoException("Invalid field in source data: " + fieldNumber.ToString());
+                if (fieldNumber < 1) throw new ProtoException($"Invalid field in source data: {fieldNumber}, wireType={wireType}, position={position64}, blockEnd={blockEnd64}");  
             }
             else
             {

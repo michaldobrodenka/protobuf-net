@@ -904,9 +904,19 @@ namespace ProtoBuf.Meta
                 {
                     for (int k = 0; k < members.Length; k++)
                     {
-                        if (string.Compare(parameters[j].Name, members[k].Name, StringComparison.OrdinalIgnoreCase) != 0) continue;
+                        // with Net6, trimmed, it was not possible to deserialize KeyValuePair, creating serializer (in runtime) would fail & throw.
+	                    // {Name = "KeyValuePair`2" FullName = "System.Collections.Generic.KeyValuePair`2[[TapHome.Core.Lib.Model.DeviceActionParameterType, TapHome.Core.Lib.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Double, System.Private.CoreLib, Version=6.0.0.0
+                        // the comparison of parameters[j].Name == members[k].Name fails
+                        // because parameters[j].Name == null (of KeyValuePair constructor)
+                        // members[k].Name == "Key" or "Value"
+
+                        // with Net6, untrimmed, it binds to CoreLib, Version=4.0.0.0 and then there is no such problem
+
+	                    if (!ConstructorParameterEqualsMember(parameters[j].Name, members[k].Name))
+		                    continue;
                         Type memberType = Helpers.GetMemberType(members[k]);
-                        if (memberType != parameters[j].ParameterType) continue;
+                        if (memberType != parameters[j].ParameterType)
+	                        continue;
 
                         mapping[j] = k;
                     }
@@ -929,6 +939,34 @@ namespace ProtoBuf.Meta
 
             }
             return found == 1 ? result : null;
+        }
+
+        private static bool ConstructorParameterEqualsMember(string a, string b) 
+        {
+            // either its equal
+            // or null == "value"
+            // or null == "key"
+
+	        if (string.Compare(a, b, StringComparison.OrdinalIgnoreCase) == 0) 
+		        return true; 
+ 
+	        if (a == null && b == null) 
+		        return true; 
+ 
+	        if (b == null) 
+	        {
+		        // I want a null and b not null
+		        b = a; 
+		        a = null; 
+	        }
+ 
+	        if (a == null && string.Compare(b, "value", StringComparison.OrdinalIgnoreCase) == 0) 
+		        return true; 
+             
+	        if (a == null && string.Compare(b, "key", StringComparison.OrdinalIgnoreCase) == 0) 
+		        return true; 
+ 
+	        return false; 
         }
 
         private static void CheckForCallback(MethodInfo method, AttributeMap[] attributes, string callbackTypeName, ref MethodInfo[] callbacks, int index)
